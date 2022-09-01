@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import auth from "react-firebase-hooks";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -18,6 +17,7 @@ import {
   where,
   addDoc,
 } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDAN-6BVZcZevt8dEnzv6g9X9HO6W0Nh2s",
   authDomain: "chat-app-1ce68.firebaseapp.com",

@@ -1,22 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth, logInWithEmailAndPassword, signInWithGoogle } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 import "../css/Login.css";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user, loading, error] = useAuthState(auth);
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    console.log(email, password);
-  };
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+    if (user) navigate("/chat");
+  }, [user, loading]);
   return (
     <div className="container justify-content-center">
       <div className="row justify-content-center">
         <div className="col-auto">
-          <form
-            className="mt-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
+          <form className="mt-5">
             <div className="mb-3">
               <label htmlFor="exampleInputEmail1" className="form-label">
                 Email address
@@ -24,8 +27,6 @@ const Login = () => {
               <input
                 type="email"
                 className="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -43,7 +44,6 @@ const Login = () => {
                 value={password}
                 type="password"
                 className="form-control"
-                id="exampleInputPassword1"
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
@@ -51,11 +51,13 @@ const Login = () => {
             </div>
 
             <button
-              onClick={handleSubmit}
-              type="submit"
+              onClick={() => logInWithEmailAndPassword(email, password)}
               className="btn btn-primary"
             >
-              Login
+              Login with Email
+            </button>
+            <button onClick={signInWithGoogle} className="btn btn-primary">
+              Login with Gmail
             </button>
           </form>
         </div>
