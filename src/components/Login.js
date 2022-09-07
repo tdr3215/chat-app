@@ -1,20 +1,28 @@
 import { useState, useEffect } from "react";
-import { auth, logInWithEmailAndPassword, signInWithGoogle } from "../firebase";
+import {
+  auth,
+  signInWithGoogle,
+  logInWithEmailAndPassword,
+  logout,
+} from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+
 import "../css/Login.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, loading, error] = useAuthState(auth);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   useEffect(() => {
     if (loading) {
+      // maybe trigger a loading screen
       return;
     }
-    if (user) navigate("/chat");
+    if (user) navigate("/dashboard");
   }, [user, loading]);
+
   return (
     <div className="container justify-content-center">
       <div className="row justify-content-center">
@@ -49,16 +57,25 @@ const Login = () => {
                 }}
               />
             </div>
-
+            {/* 
             <button
               onClick={() => logInWithEmailAndPassword(email, password)}
               className="btn btn-primary"
             >
               Login with Email
-            </button>
-            <button onClick={signInWithGoogle} className="btn btn-primary">
-              Login with Gmail
-            </button>
+            </button> */}
+            <div className="justify-content-between">
+              <Link
+                to={"/dashboard"}
+                className="btn btn-primary border-white"
+                onClick={signInWithGoogle}
+              >
+                Login with Google
+              </Link>
+              <button onClick={logout} className="btn btn-primary border-white">
+                Logout
+              </button>
+            </div>
           </form>
         </div>
       </div>

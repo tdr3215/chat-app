@@ -8,7 +8,6 @@ import {
   sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
-
 import {
   getFirestore,
   query,
@@ -40,9 +39,8 @@ const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     const user = res.user;
-    const q = query(collection(db, "users"), where("uid", "==", user.id));
+    const q = query(collection(db, "users"), where("uid", "==", user.uid));
     const docs = await getDocs(q);
-
     if (docs.docs.length === 0) {
       await addDoc(collection(db, "users"), {
         uid: user.uid,
@@ -52,7 +50,7 @@ const signInWithGoogle = async () => {
       });
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     alert(err.message);
   }
 };

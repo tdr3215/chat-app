@@ -1,5 +1,6 @@
 import Login from "./components/Login";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
 
 function App(props) {
@@ -8,7 +9,7 @@ function App(props) {
       <Router>
         <Routes>
           <Route name="Login" exact path="/" element={<Login />} />
-          <Route name="Chat" path="/chat" element={<Chat />} />
+          <Route name="Dashboard" path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </div>
