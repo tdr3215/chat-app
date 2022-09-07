@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import "../css/Dashboard.css";
-import Chat from "./Chat";
+import Message from "./Message";
 import { auth, db, logout } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 function Dashboard() {
@@ -60,8 +60,7 @@ function Dashboard() {
     <div className="container">
       <div className="row">
         <div className="dashboard__container">
-          Logged in as
-          <div>{name}</div>
+          Welcome back, {name}!
           <div>{user?.email}</div>
           <button
             className="dashboard__btn btn btn-primary border-warning"
@@ -71,8 +70,28 @@ function Dashboard() {
           </button>
           <hr />
           <div className="row">
-            <Chat userName={name} msg={"test message"} />
+            <Message userName={name} msg={"test message"} />
           </div>
+        </div>
+      </div>
+      <div className=" d-flex align-items-end">
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="What do you want to say?"
+            aria-label="Recipient's username"
+            aria-describedby="basic-addon2"
+          />
+          <button
+            className="input-group-text"
+            id="basic-addon2"
+            onClick={() => {
+              console.log("send new message");
+            }}
+          >
+            Send
+          </button>
         </div>
       </div>
     </div>
