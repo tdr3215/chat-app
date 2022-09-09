@@ -4,18 +4,32 @@ import { useNavigate } from "react-router-dom";
 import "../css/Dashboard.css";
 import Message from "./Message";
 import { auth, db, logout } from "../firebase";
-import { query, collection, getDocs, where } from "firebase/firestore";
+import {
+  query,
+  collection,
+  getDocs,
+  where,
+  setDoc,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 function Dashboard() {
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState("");
+  const [msgBody, setMsgBody] = useState("");
   const navigate = useNavigate();
+
+  let date = new Date();
+  let time = date.toLocaleTimeString();
+
   const fetchUserName = async () => {
     try {
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("uid", "==", user?.uid));
       const doc = await getDocs(q);
       const data = doc.docs[0].data();
+
       setName(data.name);
     } catch (err) {
       console.error(err);
@@ -23,36 +37,39 @@ function Dashboard() {
     }
   };
 
-  // GET MSGS
-  // const fetchMessages = async()=>{
-  // try {
+  const fetchMessages = async () => {
+    const initMessages = async () => {
+      const msgRef = doc(db, "users", "messages");
+      const docSnap = await getDoc(msgRef);
+      const data = docSnap.data();
 
-  // }catch(e){
+      if (docSnap.exists) {
+        setMessages(data.chat);
+      } else {
+        await setDoc(doc(db, "users", "messages"), { chat: [] });
+        setMessages(data.chat);
+      }
+    };
 
-  // }
-  // }
+    initMessages();
+  };
 
-  // ADD MSG
-  // const addMsg = async ()=>{
-  // try {
+  const addMsg = async () => {
+    let newMsg = {
+      userID: user?.uid,
+      msgID: time,
+      body: msgBody,
+    };
 
-  // }catch(e){
-
-  // }
-  // }
-
-  // DEL MSG
-  // const delMsg = async () => {
-  //   try {
-
-  //   } catch (e) {
-
-  //   }
-  // };
+    // query the messages to find chat
+    // spread the messages that exist and add the newMsg --> [...chat,newMsg]
+  };
 
   useEffect(() => {
     if (loading) return;
     if (!user) return navigate("/");
+    fetchMessages();
+
     fetchUserName();
   }, [user, loading]);
 
@@ -60,8 +77,7 @@ function Dashboard() {
     <div className="container">
       <div className="row">
         <div className="dashboard__container">
-          Welcome back, {name}!
-          <div>{user?.email}</div>
+          Welcome back, {name}!<div>{user?.email}</div>
           <button
             className="dashboard__btn btn btn-primary border-warning"
             onClick={logout}
@@ -71,6 +87,7 @@ function Dashboard() {
           <hr />
           <div className="row">
             <Message userName={name} msg={"test message"} />
+            <p></p>
           </div>
         </div>
       </div>
@@ -80,8 +97,10 @@ function Dashboard() {
             type="text"
             className="form-control"
             placeholder="What do you want to say?"
-            aria-label="Recipient's username"
-            aria-describedby="basic-addon2"
+            value={msgBody}
+            onChange={(e) => {
+              setMsgBody(e.target.value);
+            }}
           />
           <button
             className="input-group-text"
